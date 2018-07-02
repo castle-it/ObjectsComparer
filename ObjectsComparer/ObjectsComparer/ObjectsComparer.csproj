@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Framework provides mechanism to compare classes, allows override comparison rules for specific properties and types.</Description>
+    <Copyright>Copyright © Valerii Tereshchenko 2017</Copyright>
+    <AssemblyTitle>Objects Data Comparer</AssemblyTitle>
+    <VersionPrefix>4.7.2</VersionPrefix>
+    <Authors>Valerii Tereshchenko</Authors>
+    <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
+    <AssemblyName>ObjectsComparer</AssemblyName>
+    <PackageId>ObjectsComparer</PackageId>
+    <PackageTags>C#;Compare;Class;Reflection</PackageTags>
+    <PackageIconUrl>https://github.com/ValeraT1982/ObjectsComparer/blob/master/ObjectsDataComparer.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/ValeraT1982/ObjectsComparer</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/ValeraT1982/ObjectsComparer/blob/master/LICENSE</PackageLicenseUrl>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup> 
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>
