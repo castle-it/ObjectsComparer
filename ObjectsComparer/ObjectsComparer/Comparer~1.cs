@@ -11,7 +11,7 @@ namespace ObjectsComparer
     public class Comparer<T> : AbstractComparer<T>
     {
         private readonly List<MemberInfo> _members;
-        private readonly List<IComparerWithCondition> _conditionalComparers;
+        private List<IComparerWithCondition> _conditionalComparers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Comparer{T}" /> class. 
@@ -39,6 +39,17 @@ namespace ObjectsComparer
                 new GenericEnumerablesComparer(Settings, this, Factory),
                 new EnumerablesComparer(Settings, this, Factory),
             };
+        }
+
+        /// <summary>
+        /// Calculates list of differences between objects.
+        /// </summary>
+        /// <param name="obj1">Object 1.</param>
+        /// <param name="obj2">Object 2.</param>
+        /// <returns>List of differences between objects.</returns>
+        public void AddComparer(IComparerWithCondition comparer)
+        {
+            _conditionalComparers.Add(comparer);
         }
 
         /// <summary>

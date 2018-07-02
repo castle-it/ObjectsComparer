@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace ObjectsComparer
 {
-    internal interface IComparerWithCondition: IComparer
+    public interface IComparerWithCondition: IComparer
     {
         bool IsMatch(Type type, object obj1, object obj2);
 

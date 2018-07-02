@@ -3,10 +3,16 @@
   <PropertyGroup>
     <Description>Framework provides mechanism to compare classes, allows override comparison rules for specific properties and types.</Description>
     <Copyright>Copyright © Valerii Tereshchenko 2017</Copyright>
+    
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2F7AEB9D-0AFC-4ACC-95A4-48139216888E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
     <AssemblyTitle>Objects Data Comparer</AssemblyTitle>
-    <VersionPrefix>4.7.2</VersionPrefix>
     <Authors>Valerii Tereshchenko</Authors>
-    <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
     <AssemblyName>ObjectsComparer</AssemblyName>
     <PackageId>ObjectsComparer</PackageId>
     <PackageTags>C#;Compare;Class;Reflection</PackageTags>
@@ -16,6 +22,8 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
+    <TargetFrameworkProfile />
   </PropertyGroup> 
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
