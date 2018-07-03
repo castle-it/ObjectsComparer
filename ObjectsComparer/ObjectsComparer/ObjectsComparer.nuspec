@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Valerii Tereshchenko, Jared Kremer</authors>
+    <owners>Jared Kremer</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Object Comparisons</description>
+    <releaseNotes>Object Comparisons</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>ObjectComparisons Compare Diff Difference Castle CastleWorldwide</tags>
+  </metadata>
+</package>
