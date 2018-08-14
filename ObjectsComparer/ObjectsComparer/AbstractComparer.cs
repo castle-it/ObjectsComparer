@@ -12,6 +12,10 @@ namespace ObjectsComparer
         protected AbstractComparer(ComparisonSettings settings, BaseComparer parentComparer, IComparersFactory factory) 
             : base(settings, parentComparer, factory)
         {
+            if (parentComparer != null)
+            {
+                _conditionalComparers = parentComparer._conditionalComparers;
+            }
         }
 
         public abstract IEnumerable<Difference> CalculateDifferences(Type type, object obj1, object obj2);

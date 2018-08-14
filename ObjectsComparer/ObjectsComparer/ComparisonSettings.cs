@@ -15,6 +15,21 @@ namespace ObjectsComparer
         public bool RecursiveComparison { get; set; }
 
         /// <summary>
+        /// If True, after a custom comparer runs, it will continue through properties as per normal, use the skip members to exclude. This allows for custom and default member compares
+        /// </summary>
+        public bool ContinueCompareAfterCustomCompare { get; set; }
+
+        /// <summary>
+        /// Use Order comparison to determine changes
+        /// </summary>
+        public bool EnumerationsWithOrderComparison { get; set; }
+
+        /// <summary>
+        /// If True, after a custom comparer runs, it will continue through properties as per normal, use the skip members to exclude. This allows for custom and default member compares
+        /// </summary>
+        public bool EnumerationsWithOrderComparisonIncludeIndexChanges { get; set; }
+
+        /// <summary>
         /// If true, empty <see cref="System.Collections.IEnumerable"/>  and null values will be considered as equal values. False by default.
         /// </summary>
         public bool EmptyAndNullEnumerablesEqual { get; set; }
@@ -24,6 +39,14 @@ namespace ObjectsComparer
         /// Applicable for dynamic types comparison only. False by default.
         /// </summary>
         public bool UseDefaultIfMemberNotExist { get; set; }
+
+        /// <summary>
+        /// If true and member does not exists, objects comparer will consider that this member is equal to default value of opposite member type. 
+        /// Applicable for dynamic types comparison only. False by default.
+        /// </summary>
+        public bool UseInclusiveListOnly { get; set; }
+
+        public List<IObjectKeyComparison> ObjectKeyComparisons { get; set; }
 
         private readonly Dictionary<Tuple<Type, string>, object> _settings = new Dictionary<Tuple<Type, string>, object>();
 
@@ -35,6 +58,8 @@ namespace ObjectsComparer
             RecursiveComparison = true;
             EmptyAndNullEnumerablesEqual = false;
             UseDefaultIfMemberNotExist = false;
+            UseInclusiveListOnly = false;
+            ObjectKeyComparisons = new List<IObjectKeyComparison>();
         }
 
         /// <summary>
@@ -67,5 +92,12 @@ namespace ObjectsComparer
 
             throw new KeyNotFoundException();
         }
+    }
+
+    public interface IObjectKeyComparison
+    {
+        Type Type {get;}
+
+        object FindMatchingItemInList(object item, object itemList);
     }
 }

@@ -8,6 +8,7 @@ namespace ObjectsComparer
 {
     internal abstract class AbstractDynamicObjectsComprer<T>: AbstractComparer, IComparerWithCondition
     {
+
         protected AbstractDynamicObjectsComprer(ComparisonSettings settings, BaseComparer parentComparer, IComparersFactory factory) : base(settings, parentComparer, factory)
         {
         }
@@ -117,6 +118,7 @@ namespace ObjectsComparer
         public abstract bool IsStopComparison(Type type, object obj1, object obj2);
 
         public abstract bool SkipMember(Type type, MemberInfo member);
+        public Dictionary<string, Dictionary<DifferenceTypes, string>> InclusiveFieldCompareConfiguaration { get; set; }
 
         protected abstract IList<string> GetProperties(T obj);
         

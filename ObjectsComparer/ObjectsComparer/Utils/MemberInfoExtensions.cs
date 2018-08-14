@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace ObjectsComparer.Utils
 {
-    internal static class MemberInfoExtensions
+    static class MemberInfoExtensions
     {
         public static Type GetMemberType(this MemberInfo memberInfo)
         {

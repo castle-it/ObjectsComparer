@@ -38,6 +38,8 @@ namespace ObjectsComparer
             return false;
         }
 
+        public Dictionary<string, Dictionary<DifferenceTypes, string>> InclusiveFieldCompareConfiguaration { get; set; }
+
         public abstract override IEnumerable<Difference> CalculateDifferences(Type type, object obj1, object obj2);
 
         public abstract bool IsMatch(Type type, object obj1, object obj2);

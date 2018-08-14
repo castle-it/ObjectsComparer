@@ -107,5 +107,7 @@ namespace ObjectsComparer
         {
             return false;
         }
+
+        public Dictionary<string, Dictionary<DifferenceTypes, string>> InclusiveFieldCompareConfiguaration { get; set; }
     }
 }

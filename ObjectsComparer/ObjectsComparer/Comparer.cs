@@ -44,5 +44,6 @@ namespace ObjectsComparer
 
             return (IEnumerable<Difference>)method.Invoke(comparer, new[] { obj1, obj2 });
         }
+
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using ObjectsComparer.Utils;
@@ -14,11 +15,14 @@ namespace ObjectsComparer
         /// Comparison Settings.
         /// </summary>
         public ComparisonSettings Settings { get; }
+        public List<IComparerWithCondition> _conditionalComparers;
 
         /// <summary>
         /// Default <see cref="IValueComparer"/>
         /// </summary>
         public IValueComparer DefaultValueComparer { get; private set; }
+
+        public Dictionary<string, List<FieldComparisonConfig>> FieldCompareConfiguarations { get; set; }
 
         protected IComparersFactory Factory { get; }
 
@@ -29,11 +33,16 @@ namespace ObjectsComparer
             Factory = factory ?? new ComparersFactory();
             Settings = settings ?? new ComparisonSettings();
             DefaultValueComparer = new DefaultValueComparer();
+            FieldCompareConfiguarations = new Dictionary<string, List<FieldComparisonConfig>>();
+
             if (parentComparer != null)
             {
                 DefaultValueComparer = parentComparer.DefaultValueComparer;
                 OverridesCollection.Merge(parentComparer.OverridesCollection);
+                _conditionalComparers = parentComparer._conditionalComparers;
             }
+
+            AddFieldDifferenceConfiguarions();
         }
 
         /// <summary>
@@ -45,6 +54,27 @@ namespace ObjectsComparer
         public void AddComparerOverride(Type type, IValueComparer valueComparer, Func<MemberInfo, bool> filter = null)
         {
             OverridesCollection.AddComparer(type, valueComparer, filter);
+        }
+
+        public virtual void AddFieldDifferenceConfiguarions()
+        {
+            //override this to implement
+        }
+
+        public void AddFieldDifferenceConfiguarion(string fieldName, string message = null, DifferenceTypes differenceType = DifferenceTypes.ValueMismatch, DifferenceSeverity severity = DifferenceSeverity.Informational)
+        {
+            if (!FieldCompareConfiguarations.ContainsKey(fieldName.ToLower()))
+            {
+                FieldCompareConfiguarations.Add(fieldName.ToLower(), new List<FieldComparisonConfig>());
+            }
+
+            FieldCompareConfiguarations[fieldName.ToLower()].Add(new FieldComparisonConfig()
+            {
+                FieldPath = fieldName,
+                DifferenceSeverity = severity,
+                DifferenceType = differenceType,
+                Message = message
+            });
         }
 
         /// <summary>

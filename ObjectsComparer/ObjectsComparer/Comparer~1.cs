@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ObjectsComparer.Utils;
@@ -10,8 +11,9 @@ namespace ObjectsComparer
     /// </summary>
     public class Comparer<T> : AbstractComparer<T>
     {
+        private static Dictionary<Type, List<MemberInfo>> TypeMembersCache = new Dictionary<Type, List<MemberInfo>>();
         private readonly List<MemberInfo> _members;
-        private List<IComparerWithCondition> _conditionalComparers;
+        
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Comparer{T}" /> class. 
@@ -22,14 +24,21 @@ namespace ObjectsComparer
         public Comparer(ComparisonSettings settings = null, BaseComparer parentComparer = null, IComparersFactory factory = null)
             : base(settings, parentComparer, factory)
         {
-            var properties = typeof(T).GetTypeInfo().GetProperties().Where(p =>
-                p.CanRead
-                && p.GetGetMethod(true).IsPublic
-                && p.GetGetMethod(true).GetParameters().Length == 0
-                && !p.GetGetMethod(true).IsStatic).ToList();
-            var fields = typeof(T).GetTypeInfo().GetFields().Where(f =>
-                f.IsPublic && !f.IsStatic).ToList();
-            _members = properties.Union(fields.Cast<MemberInfo>()).ToList();
+
+            var type = typeof(T);
+            if (!TypeMembersCache.ContainsKey(type))
+            {
+                var properties =  typeof(T).GetTypeInfo().GetProperties().Where(p =>
+                    p.CanRead
+                    && p.GetGetMethod(true).IsPublic
+                    && p.GetGetMethod(true).GetParameters().Length == 0
+                    && !p.GetGetMethod(true).IsStatic).ToList();
+                var fields = typeof(T).GetTypeInfo().GetFields().Where(f =>
+                    f.IsPublic && !f.IsStatic).ToList();
+                TypeMembersCache.Add(type, properties.Union(fields.Cast<MemberInfo>()).ToList());
+            }
+
+            _members = TypeMembersCache[type];
             _conditionalComparers = new List<IComparerWithCondition>
             {
                 new MultidimensionalArraysComparer(Settings, this, Factory),
@@ -39,6 +48,21 @@ namespace ObjectsComparer
                 new GenericEnumerablesComparer(Settings, this, Factory),
                 new EnumerablesComparer(Settings, this, Factory),
             };
+            if (parentComparer == null) return;
+            try
+            {
+                var comparerTypes = _conditionalComparers.Select(c => c.GetType());
+                
+                foreach (var comparerWithCondition in parentComparer._conditionalComparers)
+                {
+                    if (!comparerTypes.Contains(comparerWithCondition.GetType()))
+                    {
+                        _conditionalComparers.Add(comparerWithCondition);
+                    }
+                }
+            } catch(Exception e) { }
+            
+            
         }
 
         /// <summary>
@@ -50,6 +74,18 @@ namespace ObjectsComparer
         public void AddComparer(IComparerWithCondition comparer)
         {
             _conditionalComparers.Add(comparer);
+        }
+
+
+        /// <summary>
+        /// Calculates list of differences between objects.
+        /// </summary>
+        /// <param name="obj1">Object 1.</param>
+        /// <param name="obj2">Object 2.</param>
+        /// <returns>List of differences between objects.</returns>
+        public List<IComparerWithCondition> GetComparers()
+        {
+            return _conditionalComparers;
         }
 
         /// <summary>
@@ -114,14 +150,17 @@ namespace ObjectsComparer
 
             foreach (var member in _members)
             {
+                if (conditionalComparer != null &&
+                    (conditionalComparer.SkipMember(typeof(T), member) || (conditionalComparer.FieldCompareConfiguarations != null && !conditionalComparer.FieldCompareConfiguarations.Keys.Contains(member.Name.ToLower()))))
+                {
+                    continue;
+                }
+
                 var value1 = member.GetMemberValue(obj1);
                 var value2 = member.GetMemberValue(obj2);
                 var type = member.GetMemberType();
 
-                if (conditionalComparer != null && conditionalComparer.SkipMember(typeof(T), member))
-                {
-                    continue;
-                }
+                
 
                 var valueComparer = DefaultValueComparer;
                 var hasCustomComparer = false;
@@ -140,6 +179,14 @@ namespace ObjectsComparer
 
                     foreach (var failure in objectDataComparer.CalculateDifferences(type, value1, value2))
                     {
+                        if(conditionalComparer?.FieldCompareConfiguarations?.ContainsKey(member.Name.ToLower()) == true)
+                        {
+                            var fieldConfig = conditionalComparer
+                                .FieldCompareConfiguarations[member.Name.ToLower()]
+                                .FirstOrDefault(f => f.DifferenceType == failure.DifferenceType);
+                            failure.DifferenceDescription = fieldConfig?.Message;
+                        }
+                        
                         yield return failure.InsertPath(member.Name);
                     }
 
@@ -148,7 +195,21 @@ namespace ObjectsComparer
 
                 if (!valueComparer.Compare(value1, value2, Settings))
                 {
-                    yield return new Difference(member.Name, valueComparer.ToString(value1), valueComparer.ToString(value2));
+                    if (Settings.EnumerationsWithOrderComparison && member.Name == "Count")//we can exclude count if we are already handling it with child diff objects
+                    {
+                        continue;
+                    }
+                    var diff = new Difference(member.Name, valueComparer.ToString(value1),
+                        valueComparer.ToString(value2));
+                    if (conditionalComparer?.FieldCompareConfiguarations?.ContainsKey(member.Name.ToLower()) == true)
+                    {
+                        var fieldConfig = conditionalComparer
+                            .FieldCompareConfiguarations[member.Name.ToLower()]
+                            .FirstOrDefault(f => f.DifferenceType == diff.DifferenceType);
+                        diff.DifferenceDescription = fieldConfig?.Message;
+                    }
+
+                    yield return diff;
                 }
             }
         }

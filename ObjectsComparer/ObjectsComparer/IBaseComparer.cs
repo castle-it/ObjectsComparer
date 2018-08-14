@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -13,6 +14,8 @@ namespace ObjectsComparer
         /// Default <see cref="IValueComparer"/>
         /// </summary>
         IValueComparer DefaultValueComparer { get; }
+
+        Dictionary<string, List<FieldComparisonConfig>> FieldCompareConfiguarations { get; set; }
 
         /// <summary>
         /// Comparison Settings.
@@ -85,5 +88,13 @@ namespace ObjectsComparer
         /// <param name="valueComparer">Value Comparer.</param>
         /// <param name="filter">Value Comparer will be used only if filter(memberInfo) == true. Null by default.</param>
         void AddComparerOverride(string memberName, IValueComparer valueComparer, Func<MemberInfo, bool> filter = null);
+    }
+
+    public class FieldComparisonConfig
+    {
+        public string FieldPath { get; set; }
+        public DifferenceTypes DifferenceType { get; set; }
+        public DifferenceSeverity DifferenceSeverity { get; set; }
+        public string Message { get; set; }
     }
 }

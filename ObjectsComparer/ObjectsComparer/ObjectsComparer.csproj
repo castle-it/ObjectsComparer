@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Framework provides mechanism to compare classes, allows override comparison rules for specific properties and types.</Description>
-    <Copyright>Copyright © Valerii Tereshchenko 2017</Copyright>
+    <Copyright>Copyright © Valerii Tereshchenko 2017 © Jared Kremer 2018</Copyright>
     
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AssemblyTitle>Objects Data Comparer</AssemblyTitle>
-    <Authors>Valerii Tereshchenko</Authors>
+    <Authors>Valerii Tereshchenko, Jared Kremer</Authors>
     <AssemblyName>ObjectsComparer</AssemblyName>
     <PackageId>ObjectsComparer</PackageId>
     <PackageTags>C#;Compare;Class;Reflection</PackageTags>
@@ -24,6 +24,10 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkProfile />
+    <Version>1.0.8</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <AssemblyVersion>1.0.8.0</AssemblyVersion>
+    <FileVersion>1.0.8.0</FileVersion>
   </PropertyGroup> 
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
@@ -34,6 +38,15 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
   </ItemGroup>
 
 </Project>
